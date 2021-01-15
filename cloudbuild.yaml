@@ -1,0 +1,15 @@
+steps:
+- name: 'gcr.io/cloud-builders/docker'
+  args: ['build', '--tag=gcr.io/$PROJECT_ID/nodejs-postgres', '.']
+
+- name: 'gcr.io/$PROJECT_ID/nodejs-postgres'
+  args: ['-V']
+
+- name: 'gcr.io/$PROJECT_ID/nodejs-postgres'
+  args: ['-t', 'test', '-s', 'test.sql']
+  dir: 'test'
+  env:
+    - 'PGPASSWORD=test'
+    - 'PGUSER=postgres'
+
+images: ['gcr.io/$PROJECT_ID/nodejs-postgres']
