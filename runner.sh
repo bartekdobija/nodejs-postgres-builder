@@ -2,12 +2,17 @@
 
 test()
 {
-    IFS="," read -r -a data <<< $1
-    steps=$2
+    steps=$1
 
     su - postgres -c "pg_ctl start -D /var/lib/postgresql/data -l /var/lib/postgresql/log.log"
-    echo "loading data from files: ${data[@]}"
-    cat ${data[@]} | psql -U postgres -h 127.0.0.1
+    
+    if [ ! -z "$2" ]
+    then
+        IFS="," read -r -a data <<< $2
+        echo "loading data from files: ${data[@]}"
+        cat ${data[@]} | psql -U postgres -h 127.0.0.1
+    fi
+
     echo "running: npm run $steps"
     eval "npm run $steps"
 }
@@ -36,13 +41,13 @@ main()
         esac
     done
 
-    if [ -z "${data}" ] || [ -z "${steps}" ]
+    if [ -z "${steps}" ]
     then
         help
         exit 1
     fi 
 
-    test $data $steps
+    test $steps $data
 }
 
 main "$@"
