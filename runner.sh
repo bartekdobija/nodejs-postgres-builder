@@ -2,11 +2,12 @@
 
 test()
 {
-    IFS="," read -a data <<< $1
+    IFS="," read -r -a data <<< $1
     steps=$2
 
     su - postgres -c "pg_ctl start -D /var/lib/postgresql/data -l /var/lib/postgresql/log.log"
-    cat $data | psql -U postgres -h 127.0.0.1
+    echo "loading data from files: ${data[@]}"
+    cat ${data[@]} | psql -U postgres -h 127.0.0.1
     echo "running: npm run $steps"
     eval "npm run $steps"
 }
